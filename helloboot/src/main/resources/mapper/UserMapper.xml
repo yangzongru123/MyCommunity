@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yzr.helloboot.dao.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.yzr.helloboot.dto.User" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="add_time" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="add_user_id" property="addUserId" jdbcType="BIGINT" />
+    <result column="delete_state" property="deleteState" jdbcType="INTEGER" />
+    <result column="edit_id" property="editId" jdbcType="BIGINT" />
+    <result column="edit_time" property="editTime" jdbcType="TIMESTAMP" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="login_pwd" property="loginPwd" jdbcType="VARCHAR" />
+    <result column="notes" property="notes" jdbcType="VARCHAR" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="TINYINT" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <association property="factory"  javaType="com.yzr.helloboot.dto.Factory">
+			<id property="id" column="factory_id"/>
+			<result property="name" column="name"/>
+	</association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, add_time, add_user_id, delete_state, edit_id, edit_time, email, login_pwd, notes, 
+    real_name, sex, tel, user_name, factory_id
+  </sql>
+  <sql id="Base_Column_List1" >
+    id, add_time, add_user_id, delete_state, edit_id, edit_time, email, login_pwd, notes, 
+    real_name, sex, tel, user_name, factory_id,role_id,role_name,factory_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select <include refid="Base_Column_List" />
+    from cx_user
+    where id=#{id} 
+  </select>
+  <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select <include refid="Base_Column_List" />
+    from cx_user
+    where user_name=#{userName}
+  </select>
+  <select id="selectALLUser" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	  select a.*,b.name from cx_user as a inner join cx_factory as b on b.id=a.factory_id where 1=1
+   	  <if test="user.userName!=null and user.factory.id!=-1">
+   	 	and a.factory_id=#{user.factory.id}
+   	 </if>
+   	 <if test="user.userName!=null and user.userName!=''">
+   	 	and a.user_name like CONCAT(CONCAT('%',#{user.userName}),'%')
+   	 </if>
+   	 <!-- limit #{offset},#{limit} -->	 
+  </select>
+  <select id="selectCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+  		select count(*) from cx_user as a inner join cx_factory as b on b.id=a.factory_id where 1=1
+   	 <if test="user.userName!=null and user.factory.id!=-1">
+   	 	and a.factory_id=#{user.factory.id}
+   	 </if>
+   	 <if test="user.userName!=null and user.userName!=''">
+   	 	and a.user_name like CONCAT(CONCAT('%',#{user.userName}),'%')
+   	 </if> 
+  </select>
+  <delete id="delete" parameterType="java.lang.Long" >
+    delete from cx_user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertUser" parameterType="com.yzr.helloboot.dto.User" >
+  	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+  		select max(id) from cx_user
+  	</selectKey>
+    insert into cx_user (id, add_time, add_user_id, 
+      delete_state, edit_id, edit_time, 
+      email, login_pwd, notes, 
+      real_name, sex, tel, 
+      user_name, factory_id)
+    values (default,now(), #{addUserId,jdbcType=BIGINT}, 
+      #{deleteState,jdbcType=INTEGER}, #{addUserId,jdbcType=BIGINT}, now(), 
+      #{email,jdbcType=VARCHAR}, #{loginPwd,jdbcType=VARCHAR}, #{notes,jdbcType=VARCHAR}, 
+      #{realName,jdbcType=VARCHAR}, #{sex,jdbcType=TINYINT}, #{tel,jdbcType=VARCHAR}, 
+      #{userName,jdbcType=VARCHAR}, #{factory.id,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yzr.helloboot.dto.User" >
+    insert into cx_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="addUserId != null" >
+        add_user_id,
+      </if>
+      <if test="deleteState != null" >
+        delete_state,
+      </if>
+      <if test="editId != null" >
+        edit_id,
+      </if>
+      <if test="editTime != null" >
+        edit_time,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="loginPwd != null" >
+        login_pwd,
+      </if>
+      <if test="notes != null" >
+        notes,
+      </if>
+      <if test="realName != null" >
+        real_name,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="tel != null" >
+        tel,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="factoryId != null" >
+        factory_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addUserId != null" >
+        #{addUserId,jdbcType=BIGINT},
+      </if>
+      <if test="deleteState != null" >
+        #{deleteState,jdbcType=INTEGER},
+      </if>
+      <if test="editId != null" >
+        #{editId,jdbcType=BIGINT},
+      </if>
+      <if test="editTime != null" >
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPwd != null" >
+        #{loginPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="notes != null" >
+        #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=TINYINT},
+      </if>
+      <if test="tel != null" >
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryId != null" >
+        #{factoryId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yzr.helloboot.dto.User" >
+    update cx_user
+    <set >
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addUserId != null" >
+        add_user_id = #{addUserId,jdbcType=BIGINT},
+      </if>
+      <if test="deleteState != null" >
+        delete_state = #{deleteState,jdbcType=INTEGER},
+      </if>
+      <if test="editId != null" >
+        edit_id = #{editId,jdbcType=BIGINT},
+      </if>
+      <if test="editTime != null" >
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPwd != null" >
+        login_pwd = #{loginPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="notes != null" >
+        notes = #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=TINYINT},
+      </if>
+      <if test="tel != null" >
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryId != null" >
+        factory_id = #{factoryId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yzr.helloboot.dto.User" >
+    update cx_user
+    set add_time = #{addTime,jdbcType=TIMESTAMP},
+      add_user_id = #{addUserId,jdbcType=BIGINT},
+      delete_state = #{deleteState,jdbcType=INTEGER},
+      edit_id = #{editId,jdbcType=BIGINT},
+      edit_time = #{editTime,jdbcType=TIMESTAMP},
+      email = #{email,jdbcType=VARCHAR},
+      login_pwd = #{loginPwd,jdbcType=VARCHAR},
+      notes = #{notes,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=TINYINT},
+      tel = #{tel,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      factory_id = #{factoryId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="resetPassword" parameterType="com.yzr.helloboot.dto.User">
+  		update cx_user set login_pwd = #{loginPwd,jdbcType=VARCHAR} 
+  		where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateUserTable" parameterType="com.yzr.helloboot.dto.User">
+  	  update cx_user
+  	  set edit_id = #{editId,jdbcType=BIGINT},
+      edit_time = now(),
+      email = #{email,jdbcType=VARCHAR},
+      notes = #{notes,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=TINYINT},
+      tel = #{tel,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      factory_id = #{factory.id,jdbcType=BIGINT}
+      where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

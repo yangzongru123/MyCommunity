@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Title</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <script src="js/bootstrap.min.js" type="application/javascript"></script>
+</head>
+<body>
+<div class="login-box">
+    <div class="login-logo">
+        <a href="javascript:void(0);">WMS后台管理系统</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+        <p class="login-box-msg">后台管理</p>
+
+        <form action="dengru" method="post">
+            <div class="form-group has-feedback">
+                <input type="text" class="form-control" placeholder="用户名"  id="userName" name="userName"  >
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control" placeholder="密码" id="loginPwd" name="loginPwd"  >
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" class="minimal" name="remember" value="1" checked>
+                    记住用户名
+                    <!--&nbsp;&nbsp;&nbsp; <span style="color:red;">${requestScope.msg}</span>-->
+                </label>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <input type="submit" value="登录">
+                   <!-- <button type="button" class="submit" >登录</button> -->
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- /.login-box-body -->
+</div>
+</body>
+</html>
